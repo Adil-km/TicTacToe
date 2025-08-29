@@ -8,7 +8,7 @@ char board[3][3] ={
 
 int playCount = 0;
 void displayBorad(){
-    system("cls");
+    // system("cls");
     for(int i=0; i<3; i++){
         for(int j=0; j<3;j++){
             printf(" %c ",board[i][j]);
@@ -38,7 +38,7 @@ int ifWon(){
         if(board[i][0] == player2 && board[i][1] == player2 && board[i][2] == player2){
             printf("Player %c won the game\n",player2);
             return 1;
-        
+        }
         // check coloumns
         if(board[0][i] == player1 && board[1][i] == player1 && board[2][i] == player1){
             printf("Player %c won the game\n",player1);
@@ -48,7 +48,7 @@ int ifWon(){
             printf("Player %c won the game\n",player2);
             return 1;
         }
-        }
+        
     }
 
     // check diagonals
