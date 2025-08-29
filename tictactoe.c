@@ -81,7 +81,7 @@ int main(){
     displayBorad();
     for(int i =0;playCount!=9;i++){
         int row,col;
-        if(i%2==0){
+        if(playCount%2==0){
             printf("Player One move ( X )\n");
             int RowCol[] = {-1,-1};
             getPosition(RowCol);
