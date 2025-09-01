@@ -1,5 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef _WIN32
+    #define CLEAR "cls"
+#else
+    #define CLEAR "clear"
+#endif  
+
 char board[3][3] ={
                     {'-','-','-'},
                     {'-','-','-'},
@@ -7,8 +14,7 @@ char board[3][3] ={
                 };
 
 int playCount = 0;
-void displayBorad(){
-    // system("cls");
+void displayBoard(){
     for(int i=0; i<3; i++){
         for(int j=0; j<3;j++){
             printf(" %c ",board[i][j]);
@@ -17,12 +23,16 @@ void displayBorad(){
     }
 }
 
-void play(char symbol,int row, int col){
+int play(char symbol,int row, int col){
+    system(CLEAR);
     if(board[row][col] == '-'){
         board[row][col] = symbol;
         playCount++;
+        return 1;
     }else{
+        displayBoard();
         printf("Board position already marked\n");
+        return 0;
     }
 }
 
@@ -62,47 +72,71 @@ int ifWon(){
     }
     return 0;
 }
-void getPosition(int pos[]){
-    while (1){
-        printf("Choose row postion ( 0 or 1 or 2 )\n");
-        scanf("%d",&pos[0]);
-        printf("Choose column postion ( 0 or 1 or 2 )\n");
-        scanf("%d",&pos[1]);
-        if(pos[0] < 0 || pos[0] >= 3 || pos[1] < 0 || pos[1] >= 3){
+void getPosition(int pos[]) {
+    char ch;
+    while (1) {
+        printf("Choose row position (1, 2, or 3): ");
+        if (scanf("%d", &pos[0]) == 1) {
+            pos[0] -= 1;
+        } else {
+            printf("Invalid input. Please enter a number.\n");
+            while ((ch = getchar()) != '\n' && ch != EOF); // clearing buffer
+            continue;
+        }
+
+        // clear buffer in case of extra input on the same line
+        while ((ch = getchar()) != '\n' && ch != EOF);
+
+        printf("Choose column position (1, 2, or 3): ");
+        if (scanf("%d", &pos[1]) == 1) {
+            pos[1] -= 1;
+        } else {
+            printf("Invalid input. Please enter a number.\n");
+            while ((ch = getchar()) != '\n' && ch != EOF); // clearing buffer
+            continue;
+        }
+
+        // clear buffer in case of extra input on the same line
+        while ((ch = getchar()) != '\n' && ch != EOF);
+
+        if (pos[0] < 0 || pos[0] >= 3 || pos[1] < 0 || pos[1] >= 3) {
             printf("Out of board position\n");
-        }else{
-            break;
+        } else {
+            break; //exit loop if no errors
         }
     }
 }
 
 int main(){
+    system(CLEAR);
     char player1 = 'X', player2 = 'O';
-    displayBorad();
-    for(int i =0;playCount!=9;i++){
-        int row,col;
-        if(playCount%2==0){
-            printf("Player One move ( X )\n");
-            int RowCol[] = {-1,-1};
+    char currentPlayer;
+    displayBoard();
+    while(playCount!=9){
+        if(playCount%2 == 0){
+            currentPlayer = player1;
+        }
+        else{
+            currentPlayer = player2;
+        }
+        printf("Current player : %c\n\n", currentPlayer);
+
+        int RowCol[2];
+        int valid = 0;
+        do
+        {
             getPosition(RowCol);
-            play(player1,RowCol[0],RowCol[1]);
-            displayBorad();
-            if(ifWon()) return 0;
-            
-        }else{
-            printf("Player Two move ( O )\n");
-            int RowCol[] = {-1,-1};
-            getPosition(RowCol);
-            play(player2,RowCol[0],RowCol[1]);
-            displayBorad();
-            if(ifWon()) return 0;
+            valid = play(currentPlayer,RowCol[0],RowCol[1]);
+
+        } while (!valid);
+        
+        displayBoard();
+
+        if(ifWon()){
+            return 0;
         }
     }
     printf("Draw!!!\n");
-    
-
-    // printf("%d , %d", RowCol[0],RowCol[1]);
-
 
     return 0;
 }
