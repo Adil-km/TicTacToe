@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h>
 
 #ifdef _WIN32
     #define CLEAR "cls"
@@ -33,7 +34,6 @@ int evaluate_board(char board[3][3]) {
         if(board[i][0] == player2 && board[i][1] == player2 && board[i][2] == player2){
             return -10;
         }
-
         // Check Columns
         // ... If player1 wins a column, return 10
         if(board[0][i] == player1 && board[1][i] == player1 && board[2][i] == player1){
@@ -55,7 +55,6 @@ int evaluate_board(char board[3][3]) {
         return -10;
     }
     // --- 2. Check Draw (0) ---
-
     // Loop through the board to count empty_spots
     // ... If empty_spots is 0, return 0
     bool full = true;
@@ -72,11 +71,9 @@ int evaluate_board(char board[3][3]) {
     if (full) {
         return 0;
     }
-
     // --- 3. Game is Ongoing (-1) ---
     return -1; 
 }
-
 
 int minimax(char board[3][3], bool is_maximizer) {
     // 1. BASE CASE: If the position is a terminal state (win, loss, or draw), return the score.
@@ -84,12 +81,10 @@ int minimax(char board[3][3], bool is_maximizer) {
     if (score != -1) { // -1 means game is not over
         return score;
     }
-
     // Inside the main minimax function:
     if (is_maximizer) {
         // 1. Initialize the best score (to the lowest possible value)
         int maximizer = -100000;
-
         // 2. Loop through all 9 cells (i, j)
         //    If the cell is empty ('-'):
         for (int i = 0; i < 3; i++) {
@@ -105,7 +100,6 @@ int minimax(char board[3][3], bool is_maximizer) {
                         }
                         // 6. Un-do the move (board[i][j] = '-')
                         board[i][j] = '-';
-                
                     }
                 }
             }
@@ -114,10 +108,8 @@ int minimax(char board[3][3], bool is_maximizer) {
         return maximizer;
             
     }else { // This is the Minimizer's turn (is_maximizer == false)
-
         // 1. Initialize the worst score (to the highest possible value)
         int minimizer = 100000;
-        
         // 2. Loop through all empty cells (i, j)
         //    If the cell is empty ('-'):
         for (int i = 0; i < 3; i++) {
@@ -133,17 +125,13 @@ int minimax(char board[3][3], bool is_maximizer) {
                     }
                     // 6. Un-do the move
                     board[i][j] = '-';
-            
                 }
             }
         }
         // 7. Return the final best (lowest) score.
         return minimizer;
-        
     }
 }
-
-
 
 void find_best_move(int bestMove[2]){
     int bestscore = 100000;
@@ -162,7 +150,6 @@ void find_best_move(int bestMove[2]){
             }
         }
     }
-
 }
 
 void displayBoard() {
@@ -193,7 +180,6 @@ int play(char symbol,int row, int col){
 
 int ifWon(char currentPlayer){
     for(int i=0;i<3;i++){
-        
         // check rows
         if(board[i][0] == currentPlayer && board[i][1] == currentPlayer && board[i][2] == currentPlayer){
             printf("Player %c won the game\n",currentPlayer);
@@ -204,9 +190,7 @@ int ifWon(char currentPlayer){
             printf("Player %c won the game\n",currentPlayer);
             return 1;
         }
-        
     }
-
     // check diagonals
     if((board[0][0] == currentPlayer && board[1][1] == currentPlayer && board[2][2] == currentPlayer)|| (board[0][2] == currentPlayer && board[1][1] == currentPlayer && board[2][0] == currentPlayer)){
         printf("Player %c won the game\n",currentPlayer);
@@ -214,6 +198,7 @@ int ifWon(char currentPlayer){
     }
     return 0;
 }
+
 void getPosition(int pos[]) {
     char ch;
     while (1) {
@@ -225,7 +210,6 @@ void getPosition(int pos[]) {
             while ((ch = getchar()) != '\n' && ch != EOF); // clearing buffer
             continue;
         }
-
         // clear buffer in case of extra input on the same line
         while ((ch = getchar()) != '\n' && ch != EOF);
 
@@ -237,7 +221,6 @@ void getPosition(int pos[]) {
             while ((ch = getchar()) != '\n' && ch != EOF); // clearing buffer
             continue;
         }
-
         // clear buffer in case of extra input on the same line
         while ((ch = getchar()) != '\n' && ch != EOF);
 
@@ -263,10 +246,14 @@ int main(){
             currentPlayer = player2;
             // 1. Declare the move array:
             int moveArray[2];
-            
             // 2. Call the AI function to find the best move:
             find_best_move(moveArray);
             
+            printf("AI is thinking");
+            for (int i = 0; i < 3; i++) {
+                sleep(1);
+                printf(".");
+            }
             // 3. Execute the move using the coordinates found:
             play(player2, moveArray[0], moveArray[1]);
         }
